@@ -23,8 +23,8 @@ import { Button } from "@/components/ui/button"
 
 export function Chat() {
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex-1 overflow-auto p-4 space-y-4">
+    <div className="flex flex-col h-screen w-full max-w-[1024px] border border-gray-400 rounded-lg">
+      <div className="flex-1 overflow-auto p-4 space-y-4 w-full">
         <div className="flex items-start gap-3">
           <Avatar className="w-8 h-8 border">
             <AvatarImage src="/placeholder-user.jpg" alt="Image" />
