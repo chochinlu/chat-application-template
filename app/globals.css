@@ -68,3 +68,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes blink {
+  0% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.thinking {
+  animation: blink 1.4s infinite;
+}

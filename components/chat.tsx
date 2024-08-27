@@ -36,6 +36,7 @@ export function Chat() {
     { role: 'assistant', content: 'Hello! How can I assist you today?' }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -45,8 +46,9 @@ export function Chat() {
       { role: 'user', content: inputMessage }
     ];
 
-    setMessages(newMessages as Message[]);
+    setMessages(newMessages);
     setInputMessage('');
+    setIsThinking(true);
 
     try {
       const response = await fetch('/api/chat', {
@@ -65,6 +67,9 @@ export function Chat() {
       setMessages([...newMessages, { role: 'assistant', content: data.message }]);
     } catch (error) {
       console.error('Error sending message:', error);
+      setMessages([...newMessages, { role: 'assistant', content: 'Sorry, an error occurred.' }]);
+    } finally {
+      setIsThinking(false);
     }
   };
 
@@ -81,6 +86,15 @@ export function Chat() {
             message={msg.content}
           />
         ))}
+        {isThinking && (
+          <ChatMessage
+            isAI={true}
+            avatarSrc="/ai-avatar.jpg"
+            avatarFallback="AI"
+            name="AI"
+            message={<span className="thinking">thinking...</span>}
+          />
+        )}
       </div>
       <div className="border-t p-2 flex items-center gap-2">
         <Textarea

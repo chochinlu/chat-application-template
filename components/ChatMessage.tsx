@@ -1,11 +1,11 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-
+import { ReactNode } from 'react';
 interface ChatMessageProps {
   isAI: boolean;
   avatarSrc: string;
   avatarFallback: string;
   name: string;
-  message: string;
+  message: ReactNode;
 }
 
 export function ChatMessage({ isAI, avatarSrc, avatarFallback, name, message }: ChatMessageProps) {
