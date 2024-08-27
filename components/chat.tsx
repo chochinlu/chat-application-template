@@ -74,6 +74,19 @@ export function Chat() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (e.ctrlKey) {
+        // Ctrl+Enter: Insert a new line
+        setInputMessage(prev => prev + '\n');
+      } else if (!e.shiftKey) {
+        // Enter only (excluding Shift+Enter): Send message
+        e.preventDefault();
+        handleSendMessage();
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-full max-w-[1024px] border border-gray-400 rounded-lg">
       <div className="flex-1 overflow-auto p-4 space-y-4 w-full">
@@ -107,6 +120,7 @@ export function Chat() {
         <Textarea
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           className="flex-1 resize-none rounded-lg p-2 border border-muted focus:border-primary focus:ring-primary"
         />
