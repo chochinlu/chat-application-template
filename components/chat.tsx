@@ -112,7 +112,7 @@ export function Chat() {
             avatarSrc="/ai-avatar.jpg"
             avatarFallback="AI"
             name="AI"
-            message={<span className="thinking">thinking...</span>}
+            message={<span className="thinking">Thinking...</span>}
           />
         )}
       </div>
