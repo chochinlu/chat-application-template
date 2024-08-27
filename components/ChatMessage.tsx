@@ -18,7 +18,6 @@ export function ChatMessage({ isAI, avatarSrc, avatarFallback, name, message }: 
         </Avatar>
       )}
       <div className={`rounded-lg p-3 max-w-[75%] ${isAI ? 'bg-muted' : 'bg-primary text-primary-foreground'}`}>
-        <div className="font-medium">{name}</div>
         <div>{message}</div>
       </div>
       {!isAI && (

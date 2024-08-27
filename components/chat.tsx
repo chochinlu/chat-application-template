@@ -38,12 +38,12 @@ export function Chat() {
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
-    const newMessages = [
+    const newMessages: Message[] = [
       ...messages,
       { role: 'user', content: inputMessage }
     ];
 
-    setMessages(newMessages);
+    setMessages(newMessages as Message[]);
     setInputMessage('');
 
     try {
@@ -63,7 +63,6 @@ export function Chat() {
       setMessages([...newMessages, { role: 'assistant', content: data.message }]);
     } catch (error) {
       console.error('Error sending message:', error);
-      // 處理錯誤，例如顯示錯誤消息給用戶
     }
   };
 
@@ -76,7 +75,7 @@ export function Chat() {
             isAI={msg.role === 'assistant'}
             avatarSrc={msg.role === 'assistant' ? "/ai-avatar.jpg" : "/user-avatar.jpg"}
             avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
-            name={msg.role === 'assistant' ? "AI Assistant" : "You"}
+            name={msg.role === 'assistant' ? "AI" : "U"}
             message={msg.content}
           />
         ))}
