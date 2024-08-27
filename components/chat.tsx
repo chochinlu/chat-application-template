@@ -20,51 +20,40 @@ To read more about using these font, please visit the Next.js documentation:
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { ChatMessage } from "@/components/ChatMessage"
 
 export function Chat() {
   return (
     <div className="flex flex-col h-screen w-full max-w-[1024px] border border-gray-400 rounded-lg">
       <div className="flex-1 overflow-auto p-4 space-y-4 w-full">
-        <div className="flex items-start gap-3">
-          <Avatar className="w-8 h-8 border">
-            <AvatarImage src="/placeholder-user.jpg" alt="Image" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <div className="bg-muted rounded-lg p-3 max-w-[75%]">
-            <div className="font-medium">John Doe</div>
-            <div>Hey there! How's it going?</div>
-          </div>
-        </div>
-        <div className="flex items-start gap-3 justify-end">
-          <div className="bg-primary rounded-lg p-3 max-w-[75%] text-primary-foreground">
-            <div className="font-medium">You</div>
-            <div>Pretty good, thanks for asking!</div>
-          </div>
-          <Avatar className="w-8 h-8 border">
-            <AvatarImage src="/placeholder-user.jpg" alt="Image" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-        </div>
-        <div className="flex items-start gap-3">
-          <Avatar className="w-8 h-8 border">
-            <AvatarImage src="/placeholder-user.jpg" alt="Image" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <div className="bg-muted rounded-lg p-3 max-w-[75%]">
-            <div className="font-medium">John Doe</div>
-            <div>Glad to hear it! Did you catch the game last night?</div>
-          </div>
-        </div>
-        <div className="flex items-start gap-3 justify-end">
-          <div className="bg-primary rounded-lg p-3 max-w-[75%] text-primary-foreground">
-            <div className="font-medium">You</div>
-            <div>No, I missed it. What happened?</div>
-          </div>
-          <Avatar className="w-8 h-8 border">
-            <AvatarImage src="/placeholder-user.jpg" alt="Image" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-        </div>
+        <ChatMessage
+          isAI={true}
+          avatarSrc="/placeholder-user.jpg"
+          avatarFallback="JD"
+          name="John Doe"
+          message="Hey there! How's it going?"
+        />
+        <ChatMessage
+          isAI={false}
+          avatarSrc="/placeholder-user.jpg"
+          avatarFallback="JD"
+          name="You"
+          message="Pretty good, thanks for asking!"
+        />
+        <ChatMessage
+          isAI={true}
+          avatarSrc="/placeholder-user.jpg"
+          avatarFallback="JD"
+          name="John Doe"
+          message="Glad to hear it! Did you catch the game last night?"
+        />
+        <ChatMessage
+          isAI={false}
+          avatarSrc="/placeholder-user.jpg"
+          avatarFallback="JD"
+          name="You"
+          message="No, I missed it. What happened?"
+        />
       </div>
       <div className="border-t p-2 flex items-center gap-2">
         <Textarea
@@ -80,7 +69,7 @@ export function Chat() {
   )
 }
 
-function SendIcon(props) {
+function SendIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
