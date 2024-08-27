@@ -32,7 +32,9 @@ interface Message {
 }
 
 export function Chat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: 'Hello! How can I assist you today?' }
+  ]);
   const [inputMessage, setInputMessage] = useState('');
 
   const handleSendMessage = async () => {
