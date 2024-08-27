@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { ChatMessage } from "@/components/ChatMessage"
 import { SendIcon } from "@/components/SendIcon"
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -83,7 +84,13 @@ export function Chat() {
             avatarSrc={msg.role === 'assistant' ? "/ai-avatar.jpg" : "/user-avatar.jpg"}
             avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
             name={msg.role === 'assistant' ? "AI" : "U"}
-            message={msg.content}
+            message={
+              msg.role === 'assistant' ? (
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              ) : (
+                msg.content
+              )
+            }
           />
         ))}
         {isThinking && (
