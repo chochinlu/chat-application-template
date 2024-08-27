@@ -17,74 +17,82 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+'use client'
+
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ChatMessage } from "@/components/ChatMessage"
+import { SendIcon } from "@/components/SendIcon"
+import { useState } from 'react';
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
 export function Chat() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputMessage, setInputMessage] = useState('');
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const newMessages = [
+      ...messages,
+      { role: 'user', content: inputMessage }
+    ];
+
+    setMessages(newMessages);
+    setInputMessage('');
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      const data = await response.json();
+      setMessages([...newMessages, { role: 'assistant', content: data.message }]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // 處理錯誤，例如顯示錯誤消息給用戶
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-full max-w-[1024px] border border-gray-400 rounded-lg">
       <div className="flex-1 overflow-auto p-4 space-y-4 w-full">
-        <ChatMessage
-          isAI={true}
-          avatarSrc="/placeholder-user.jpg"
-          avatarFallback="JD"
-          name="John Doe"
-          message="Hey there! How's it going?"
-        />
-        <ChatMessage
-          isAI={false}
-          avatarSrc="/placeholder-user.jpg"
-          avatarFallback="JD"
-          name="You"
-          message="Pretty good, thanks for asking!"
-        />
-        <ChatMessage
-          isAI={true}
-          avatarSrc="/placeholder-user.jpg"
-          avatarFallback="JD"
-          name="John Doe"
-          message="Glad to hear it! Did you catch the game last night?"
-        />
-        <ChatMessage
-          isAI={false}
-          avatarSrc="/placeholder-user.jpg"
-          avatarFallback="JD"
-          name="You"
-          message="No, I missed it. What happened?"
-        />
+        {messages.map((msg, index) => (
+          <ChatMessage
+            key={index}
+            isAI={msg.role === 'assistant'}
+            avatarSrc={msg.role === 'assistant' ? "/ai-avatar.jpg" : "/user-avatar.jpg"}
+            avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
+            name={msg.role === 'assistant' ? "AI Assistant" : "You"}
+            message={msg.content}
+          />
+        ))}
       </div>
       <div className="border-t p-2 flex items-center gap-2">
         <Textarea
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
           placeholder="Type your message..."
           className="flex-1 resize-none rounded-lg p-2 border border-muted focus:border-primary focus:ring-primary"
         />
-        <Button variant="ghost" size="icon" className="rounded-full">
+        <Button variant="ghost" size="icon" className="rounded-full" onClick={handleSendMessage}>
           <SendIcon className="w-5 h-5" />
           <span className="sr-only">Send</span>
         </Button>
       </div>
     </div>
-  )
-}
-
-function SendIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m22 2-7 20-4-9-9-4Z" />
-      <path d="M22 2 11 13" />
-    </svg>
-  )
+  );
 }
