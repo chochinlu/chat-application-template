@@ -1,19 +1,18 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ReactNode } from 'react';
+
 interface ChatMessageProps {
   isAI: boolean;
-  avatarSrc: string;
   avatarFallback: string;
   name: string;
   message: ReactNode;
 }
 
-export function ChatMessage({ isAI, avatarSrc, avatarFallback, name, message }: ChatMessageProps) {
+export function ChatMessage({ isAI, avatarFallback, name, message }: ChatMessageProps) {
   return (
     <div className={`flex items-start gap-3 ${isAI ? '' : 'justify-end'}`}>
       {isAI && (
         <Avatar className="w-8 h-8 border">
-          <AvatarImage src={avatarSrc} alt={name} />
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
       )}
@@ -22,7 +21,6 @@ export function ChatMessage({ isAI, avatarSrc, avatarFallback, name, message }: 
       </div>
       {!isAI && (
         <Avatar className="w-8 h-8 border">
-          <AvatarImage src={avatarSrc} alt={name} />
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
       )}

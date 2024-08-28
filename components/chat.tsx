@@ -20,7 +20,7 @@ To read more about using these font, please visit the Next.js documentation:
 'use client'
 
 import { useState, useRef } from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { SendIcon } from "@/components/SendIcon"
@@ -33,29 +33,26 @@ interface Message {
 }
 
 // ChatMessage 組件修改
-const ChatMessage = ({ isAI, avatarSrc, avatarFallback, name, message, imageUrl }: {
+const ChatMessage = ({ isAI, avatarFallback, name, message }: {
   isAI: boolean;
-  avatarSrc: string;
   avatarFallback: string;
   name: string;
   message: React.ReactNode;
-  imageUrl?: string;
 }) => (
-  <div className={`flex ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>
-    <div className={`flex ${isAI ? 'flex-row' : 'flex-row-reverse'} max-w-[80%] items-start space-x-2`}>
-      <Avatar className={isAI ? 'mr-2' : 'ml-2'}>
-        <AvatarImage src={avatarSrc} alt={name} />
+  <div className={`flex items-start gap-3 ${isAI ? '' : 'justify-end'}`}>
+    {isAI && (
+      <Avatar className="w-8 h-8 border">
         <AvatarFallback>{avatarFallback}</AvatarFallback>
       </Avatar>
-      <div className={`rounded-lg p-2 ${isAI ? 'bg-gray-200' : 'bg-gray-50 text-right'}`}>
-        {imageUrl && (
-          <div className="mb-2">
-            <img src={imageUrl} alt="Attached" className="max-w-[500px] max-h-[500px] object-contain" />
-          </div>
-        )}
-        <div>{message}</div>
-      </div>
+    )}
+    <div className={`rounded-lg p-3 max-w-[75%] ${isAI ? 'bg-muted' : 'bg-primary text-primary-foreground'}`}>
+      <div>{message}</div>
     </div>
+    {!isAI && (
+      <Avatar className="w-8 h-8 border">
+        <AvatarFallback>{avatarFallback}</AvatarFallback>
+      </Avatar>
+    )}
   </div>
 );
 
@@ -185,9 +182,8 @@ export function Chat() {
           <ChatMessage
             key={index}
             isAI={msg.role === 'assistant'}
-            avatarSrc={msg.role === 'assistant' ? "/ai-avatar.jpg" : "/user-avatar.jpg"}
             avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
-            name={msg.role === 'assistant' ? "AI" : "U"}
+            name={msg.role === 'assistant' ? "AI" : "User"}
             message={
               msg.role === 'assistant' ? (
                 <ReactMarkdown>{msg.content}</ReactMarkdown>
@@ -195,13 +191,11 @@ export function Chat() {
                 msg.content
               )
             }
-            imageUrl={msg.imageUrl}
           />
         ))}
         {isThinking && (
           <ChatMessage
             isAI={true}
-            avatarSrc="/ai-avatar.jpg"
             avatarFallback="AI"
             name="AI"
             message={<span className="thinking">Thinking...</span>}
