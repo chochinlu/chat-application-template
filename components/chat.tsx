@@ -20,61 +20,16 @@ To read more about using these font, please visit the Next.js documentation:
 'use client'
 
 import { useState, useRef } from 'react';
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { SendIcon } from "@/components/SendIcon"
+import { ChatMessage } from './ChatMessage';
+import { ChatInput } from './ChatInput';
 import ReactMarkdown from 'react-markdown';
+import { AttachmentIcon, CloseIcon } from './Icons';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
-  imageUrl?: string;  // Add imageUrl property
-}
-
-// ChatMessage component modification
-const ChatMessage = ({ isAI, avatarFallback, name, message, imageUrl }: {
-  isAI: boolean;
-  avatarFallback: string;
-  name: string;
-  message: React.ReactNode;
   imageUrl?: string;
-}) => (
-  <div className={`flex ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>
-    <div className={`flex ${isAI ? 'flex-row' : 'flex-row-reverse'} max-w-[80%] items-start space-x-2`}>
-      <Avatar className={isAI ? 'mr-2' : 'ml-2'}>
-        <AvatarFallback>{avatarFallback}</AvatarFallback>
-      </Avatar>
-      <div className={`rounded-lg p-2 ${isAI ? 'bg-gray-200' : 'bg-gray-50 text-right'}`}>
-        {imageUrl && (
-          <div className="mb-2">
-            <img
-              src={imageUrl}
-              alt="Attached"
-              className="max-w-[400px] max-h-[400px] w-auto h-auto object-contain"
-            />
-          </div>
-        )}
-        <div>{message}</div>
-      </div>
-    </div>
-  </div>
-);
-
-// Add an AttachmentIcon component
-const AttachmentIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-  </svg>
-)
-
-// Modify CloseIcon component
-const CloseIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>
-)
+}
 
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([
@@ -223,44 +178,17 @@ export function Chat() {
         )}
       </div>
       <div className="border-t p-2">
-        <div className="relative">
-          {imageUrl && (
-            <div className="absolute left-2 top-2 w-20 h-20 bg-gray-200 rounded overflow-hidden group">
-              <img src={imageUrl} alt="Uploaded" className="w-full h-full object-cover" />
-              <button
-                className="absolute top-0.5 right-0.5 bg-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={handleRemoveImage}
-              >
-                <CloseIcon />
-              </button>
-            </div>
-          )}
-          <Textarea
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
-            className={`w-full resize-none rounded-lg p-2 pr-24 border border-muted focus:border-primary focus:ring-primary ${imageUrl ? 'pt-24' : ''}`}
-            rows={3}
-          />
-          <div className="absolute right-2 bottom-2 flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`rounded-full ${imageUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={handleFileAttachment}
-              disabled={!!imageUrl}
-              title="Image upload only (max 5MB)"
-            >
-              <AttachmentIcon />
-              <span className="sr-only">Attach file</span>
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full" onClick={handleSendMessage}>
-              <SendIcon className="w-5 h-5" />
-              <span className="sr-only">Send</span>
-            </Button>
-          </div>
-        </div>
+        <ChatInput
+          inputMessage={inputMessage}
+          setInputMessage={setInputMessage}
+          handleKeyDown={handleKeyDown}
+          imageUrl={imageUrl}
+          handleFileAttachment={handleFileAttachment}
+          handleSendMessage={handleSendMessage}
+          handleRemoveImage={handleRemoveImage}
+          AttachmentIcon={AttachmentIcon}
+          CloseIcon={CloseIcon}
+        />
         <input
           type="file"
           ref={fileInputRef}
