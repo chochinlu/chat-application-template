@@ -10,8 +10,6 @@ export const runtime = 'edge' // if you decide to use edge runtime
 export async function POST(req: Request) {
   try {
     const { messages, imageUrl } = await req.json();
-    console.log('messages', messages);
-    console.log('imageUrl', imageUrl);
 
     // Add system prompt
     const systemPrompt = {
