@@ -64,11 +64,31 @@ export function Chat() {
         throw new Error('API request failed');
       }
 
-      const data = await response.json();
-      setMessages([...newMessages, { role: 'assistant', content: data.message }]);
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Failed to get response reader');
+      }
+
+      let aiResponse = '';
+      setIsThinking(false);
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const text = new TextDecoder().decode(value);
+        aiResponse += text;
+
+        setMessages(prev => {
+          const newMessages = [...prev];
+          newMessages[newMessages.length - 1].content = aiResponse;
+          return newMessages;
+        });
+      }
     } catch (error) {
       console.error('Error sending message:', error);
-      setMessages([...newMessages, { role: 'assistant', content: 'Sorry, an error occurred.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: '抱歉，發生錯誤。' }]);
     } finally {
       setIsThinking(false);
     }

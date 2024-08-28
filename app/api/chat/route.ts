@@ -11,20 +11,35 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    // Add system prompt
     const systemPrompt = {
       role: 'system',
       content: 'If the user uses Traditional Chinese, please respond in Traditional Chinese. For other languages, please respond in the corresponding language.'
     };
 
-    const chatCompletion = await openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [systemPrompt, ...messages],
+      stream: true,
     });
 
-    const aiResponse = chatCompletion.choices[0].message.content;
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of stream) {
+          const text = chunk.choices[0]?.delta?.content || '';
+          controller.enqueue(encoder.encode(text));
+        }
+        controller.close();
+      },
+    });
 
-    return NextResponse.json({ message: aiResponse });
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
   } catch (error) {
     console.error('OpenAI API error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
