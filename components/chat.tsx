@@ -24,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ChatMessage } from "@/components/ChatMessage"
 import { SendIcon } from "@/components/SendIcon"
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 interface Message {
@@ -32,15 +32,40 @@ interface Message {
   content: string;
 }
 
+// Add an AttachmentIcon component
+const AttachmentIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+  </svg>
+)
+
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Hello! How can I assist you today?' }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isThinking, setIsThinking] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileAttachment = () => {
+    console.log('Attachment button clicked');
+    fileInputRef.current?.click();
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() && !imageUrl) return;
 
     const newMessages: Message[] = [
       ...messages,
@@ -51,13 +76,15 @@ export function Chat() {
     setInputMessage('');
     setIsThinking(true);
 
+    console.log('Sending message with imageUrl:', imageUrl ? imageUrl.substring(0, 50) + '...' : 'undefined');
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, imageUrl }),
       });
 
       if (!response.ok) {
@@ -91,6 +118,7 @@ export function Chat() {
       setMessages(prev => [...prev, { role: 'assistant', content: '抱歉，發生錯誤。' }]);
     } finally {
       setIsThinking(false);
+      setImageUrl(null);
     }
   };
 
@@ -106,6 +134,7 @@ export function Chat() {
       }
     }
   };
+
 
   return (
     <div className="flex flex-col h-screen w-full max-w-[1024px] border border-gray-400 rounded-lg">
@@ -137,18 +166,43 @@ export function Chat() {
         )}
       </div>
       <div className="border-t p-2 flex items-center gap-2">
-        <Textarea
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
-          className="flex-1 resize-none rounded-lg p-2 border border-muted focus:border-primary focus:ring-primary"
-        />
+        <div className="flex-1 relative">
+          <Textarea
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your message..."
+            className="w-full resize-none rounded-lg p-2 pr-12 border border-muted focus:border-primary focus:ring-primary"
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full"
+            onClick={handleFileAttachment}
+          >
+            <AttachmentIcon />
+            <span className="sr-only">Attach file</span>
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
+        </div>
         <Button variant="ghost" size="icon" className="rounded-full" onClick={handleSendMessage}>
           <SendIcon className="w-5 h-5" />
           <span className="sr-only">Send</span>
         </Button>
       </div>
+      {
+        imageUrl && (
+          <div className="p-2">
+            <img src={imageUrl} alt="Uploaded" className="max-w-xs max-h-32 object-contain" />
+          </div>
+        )
+      }
     </div>
   );
 }
