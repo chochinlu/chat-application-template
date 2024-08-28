@@ -157,7 +157,6 @@ export function Chat() {
             key={index}
             isAI={msg.role === 'assistant'}
             avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
-            name={msg.role === 'assistant' ? "AI" : "User"}
             message={
               msg.role === 'assistant' ? (
                 <ReactMarkdown>{msg.content}</ReactMarkdown>
@@ -172,7 +171,6 @@ export function Chat() {
           <ChatMessage
             isAI={true}
             avatarFallback="AI"
-            name="AI"
             message={<span className="thinking">Thinking...</span>}
           />
         )}
