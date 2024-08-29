@@ -168,7 +168,7 @@ export function Chat() {
             avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
             message={
               msg.role === 'assistant' ? (
-                <ReactMarkdown className="prose">
+                <ReactMarkdown className="prose w-full max-w-none">
                   {msg.content}
                 </ReactMarkdown>
               ) : (
