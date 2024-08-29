@@ -10,13 +10,15 @@ interface ChatMessageProps {
 
 export function ChatMessage({ isAI, avatarFallback, message, imageUrl }: ChatMessageProps) {
   return (
-    <div className={`flex ${isAI ? 'justify-start' : 'justify-end'}`}>
-      {isAI && (
-        <Avatar className="h-8 w-8 mr-2">
-          <AvatarFallback>{avatarFallback}</AvatarFallback>
-        </Avatar>
-      )}
-      <div className={`flex flex-col ${isAI ? '' : 'items-end'}`}>
+    <div className="flex w-full">
+      <div className="w-8 flex-shrink-0">
+        {isAI && (
+          <Avatar className="h-8 w-8">
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
+          </Avatar>
+        )}
+      </div>
+      <div className={`flex flex-col flex-grow px-2 ${isAI ? 'items-start' : 'items-end'}`}>
         {!isAI && imageUrl && (
           <img
             src={imageUrl}
@@ -24,16 +26,18 @@ export function ChatMessage({ isAI, avatarFallback, message, imageUrl }: ChatMes
             className="mt-2 max-w-[400px] max-h-[400px] w-auto h-auto rounded-lg object-contain"
           />
         )}
-        <div className={`mt-1 p-2 rounded-lg ${isAI ? 'bg-gray-100 text-left' : 'bg-gray-400 text-white text-right'
+        <div className={`mt-1 p-2 rounded-lg max-w-[calc(100%-32px)] ${isAI ? 'bg-gray-100 text-left' : 'bg-gray-400 text-white text-right'
           }`}>
           {message}
         </div>
       </div>
-      {!isAI && (
-        <Avatar className="h-8 w-8 ml-2">
-          <AvatarFallback>{avatarFallback}</AvatarFallback>
-        </Avatar>
-      )}
+      <div className="w-8 flex-shrink-0">
+        {!isAI && (
+          <Avatar className="h-8 w-8">
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
+          </Avatar>
+        )}
+      </div>
     </div>
   );
 }
