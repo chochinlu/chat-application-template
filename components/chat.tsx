@@ -19,7 +19,7 @@ To read more about using these font, please visit the Next.js documentation:
 **/
 'use client'
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import ReactMarkdown from 'react-markdown';
@@ -40,6 +40,7 @@ export function Chat() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [reminderMessage, setReminderMessage] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 
@@ -149,6 +150,14 @@ export function Chat() {
     }
   };
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <div className="flex flex-col h-screen w-full max-w-[1024px] border border-gray-400 rounded-lg">
       <div className="flex-1 overflow-auto p-4 space-y-4 w-full">
@@ -176,6 +185,7 @@ export function Chat() {
             message={<span className="thinking">Thinking...</span>}
           />
         )}
+        <div ref={messagesEndRef} />
       </div>
       <div className="border-t p-2">
         <ChatInput
