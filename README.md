@@ -22,22 +22,28 @@ This is a simple chat application developed using Next.js and OpenAI API. The ba
 ## Getting Started
 
 1. Install dependencies:
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-2. Run the development server:
-```bash
-npm run dev
-```
+2. Create a `.env.local` file and add your OpenAI API key:
+   ```bash
+   OPENAI_API_KEY=your_openai_api_key
+   ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
 
 
 ## TODO
 
 - [ ] Add Docker configuration
+- [ ] Add a sophisticated sidebar for comprehensive user management
 
 
 ## Contributing
