@@ -43,7 +43,7 @@ This is a simple chat application developed using Next.js and OpenAI API. The ba
 ## TODO
 
 - [ ] Add Docker configuration
-- [ ] Add a sophisticated sidebar for comprehensive user management
+- [x] Add a sophisticated sidebar for comprehensive user management
 
 
 ## Contributing
