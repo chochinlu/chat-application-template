@@ -23,7 +23,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import ReactMarkdown from 'react-markdown';
-import { AttachmentIcon, CloseIcon } from './Icons';
+import { AttachmentIcon, CloseIcon, MenuIcon } from './Icons';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -158,60 +158,94 @@ export function Chat() {
     scrollToBottom();
   }, [messages]);
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="flex flex-col h-screen w-full max-w-[1024px] border border-gray-400 rounded-lg">
-      <div className="flex-1 overflow-auto p-4 space-y-4 w-full">
-        {messages.map((msg, index) => (
-          <ChatMessage
-            key={index}
-            isAI={msg.role === 'assistant'}
-            avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
-            message={
-              msg.role === 'assistant' ? (
-                <ReactMarkdown className="prose w-full max-w-none">
-                  {msg.content}
-                </ReactMarkdown>
-              ) : (
-                msg.content
-              )
-            }
-            imageUrl={msg.imageUrl}
-          />
-        ))}
-        {isThinking && (
-          <ChatMessage
-            isAI={true}
-            avatarFallback="AI"
-            message={<span className="thinking">Thinking...</span>}
-          />
-        )}
-        <div ref={messagesEndRef} />
+    <div className="flex min-h-screen w-full bg-gray-100">
+      {/* Top bar for mobile devices */}
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-300 p-4 z-10">
+        <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-700">
+          <MenuIcon className="w-6 h-6" />
+        </button>
       </div>
-      <div className="border-t p-2">
-        <ChatInput
-          inputMessage={inputMessage}
-          setInputMessage={setInputMessage}
-          handleKeyDown={handleKeyDown}
-          imageUrl={imageUrl}
-          handleFileAttachment={handleFileAttachment}
-          handleSendMessage={handleSendMessage}
-          handleRemoveImage={handleRemoveImage}
-          AttachmentIcon={AttachmentIcon}
-          CloseIcon={CloseIcon}
-        />
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept="image/*"
-          style={{ display: 'none' }}
-        />
-      </div>
-      {reminderMessage && (
-        <div className="mt-2 text-sm text-red-500">
-          {reminderMessage}
+
+      {/* Floating sidebar */}
+      {isSidebarOpen && (
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20" onClick={toggleSidebar}>
+          <div className="w-64 h-full bg-white p-4 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <h1 className="text-2xl font-bold text-gray-500">Chat Wtih AI</h1>
+            {/* Add more sidebar content here */}
+          </div>
         </div>
       )}
+
+      {/* Desktop sidebar */}
+      <div className="hidden md:block w-64 bg-white border-r border-gray-300 p-4 flex-shrink-0">
+        <h1 className="text-2xl font-bold text-gray-500">Chat With AI</h1>
+        {/* Add more sidebar content here */}
+      </div>
+
+      {/* Main chat area */}
+      <div className="flex-1 flex justify-center p-4 md:p-4 mt-14 md:mt-0">
+        <div className="w-full max-w-[800px] flex flex-col bg-white border border-gray-400 rounded-lg overflow-hidden">
+          <div className="flex-1 overflow-auto p-4 space-y-4">
+            {messages.map((msg, index) => (
+              <ChatMessage
+                key={index}
+                isAI={msg.role === 'assistant'}
+                avatarFallback={msg.role === 'assistant' ? "AI" : "U"}
+                message={
+                  msg.role === 'assistant' ? (
+                    <ReactMarkdown className="prose w-full max-w-none">
+                      {msg.content}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )
+                }
+                imageUrl={msg.imageUrl}
+              />
+            ))}
+            {isThinking && (
+              <ChatMessage
+                isAI={true}
+                avatarFallback="AI"
+                message={<span className="thinking">Thinking...</span>}
+              />
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="border-t p-2">
+            <ChatInput
+              inputMessage={inputMessage}
+              setInputMessage={setInputMessage}
+              handleKeyDown={handleKeyDown}
+              imageUrl={imageUrl}
+              handleFileAttachment={handleFileAttachment}
+              handleSendMessage={handleSendMessage}
+              handleRemoveImage={handleRemoveImage}
+              AttachmentIcon={AttachmentIcon}
+              CloseIcon={CloseIcon}
+            />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: 'none' }}
+            />
+          </div>
+          {reminderMessage && (
+            <div className="mt-2 text-sm text-red-500 px-2">
+              {reminderMessage}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
